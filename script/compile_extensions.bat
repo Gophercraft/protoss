@@ -1,0 +1,1 @@
+protoc --go_opt=module=github.com/Gophercraft/protoss/extensions -I .\proto\ .\proto\bgs\low\pb\client\global_extensions\*.proto --go_out ./extensions/
