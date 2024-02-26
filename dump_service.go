@@ -1,6 +1,8 @@
 package protoss
 
 import (
+	"strconv"
+
 	"github.com/Gophercraft/protoss/extensions/bgs/protocol"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
@@ -9,6 +11,35 @@ import (
 func (fd *filedumper) dump_service_definition(service_descriptor *descriptorpb.ServiceDescriptorProto) (err error) {
 	fd.printf("service %s {\n", service_descriptor.GetName())
 	fd.line_indentation++
+
+	if proto.HasExtension(service_descriptor.GetOptions(), protocol.E_SdkServiceOptions) {
+		sdk_service_options := proto.GetExtension(service_descriptor.GetOptions(), protocol.E_SdkServiceOptions).(*protocol.SDKServiceOptions)
+		if sdk_service_options.Inbound != nil {
+			fd.indent()
+			fd.printf("option (sdk_service_options).inbound = %t;\n", sdk_service_options.GetInbound())
+		}
+		if sdk_service_options.Outbound != nil {
+			fd.indent()
+			fd.printf("option (sdk_service_options).outbound = %t;\n", sdk_service_options.GetOutbound())
+		}
+		if sdk_service_options.UseClientId != nil {
+			fd.indent()
+			fd.printf("option (sdk_service_options).use_client_id = %t;\n", sdk_service_options.GetUseClientId())
+		}
+	}
+
+	if proto.HasExtension(service_descriptor.GetOptions(), protocol.E_ServiceOptions) {
+		service_options := proto.GetExtension(service_descriptor.GetOptions(), protocol.E_ServiceOptions).(*protocol.BGSServiceOptions)
+		if service_options.DescriptorName != nil {
+			fd.indent()
+			fd.printf("option (service_options).descriptor_name = %s;\n", strconv.Quote(service_options.GetDescriptorName()))
+		}
+
+		if service_options.ShardName != nil {
+			fd.indent()
+			fd.printf("option (service_options).shard_name = %s;\n", strconv.Quote(service_options.GetShardName()))
+		}
+	}
 
 	for _, rpc := range service_descriptor.Method {
 		// decompile basic rpc type information
