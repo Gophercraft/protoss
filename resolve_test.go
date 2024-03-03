@@ -4,8 +4,10 @@ import "testing"
 
 func TestResolvePath(t *testing.T) {
 	var tcases = [][3]string{
-		{"package.scope.part", ".package.scope.part", "part"},
-		{"package.scope.v1", ".package.scope.v3", "v3"},
+		{"package.scope.part", ".package.scope.part.Something", "Something"},
+		{"package.scope.part", ".package.scope.part", ""},
+		{"package.scope.v1", ".package.scope.v3.Item", "scope.v3.Item"},
+		{"package.what.v2.thing.scope", ".package.other.v2.thing_alt.alternate", "package.other.v2.thing_alt.alternate"},
 	}
 
 	for _, tcase := range tcases {

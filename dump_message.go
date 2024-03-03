@@ -9,9 +9,9 @@ import (
 )
 
 func (fd *filedumper) dump_message_definition(message_descriptor *descriptorpb.DescriptorProto) (err error) {
-	// original_scope := fd.package_scope
+	original_scope := fd.package_scope
 
-	// fd.package_scope += fmt.Sprintf(".%s", message_descriptor.GetName())
+	fd.package_scope += fmt.Sprintf(".%s", message_descriptor.GetName())
 
 	// Open message definition
 	fd.indent()
@@ -186,7 +186,7 @@ func (fd *filedumper) dump_message_definition(message_descriptor *descriptorpb.D
 	fd.indent()
 	fd.printf("}\n")
 
-	// fd.package_scope = original_scope
+	fd.package_scope = original_scope
 
 	return
 }
